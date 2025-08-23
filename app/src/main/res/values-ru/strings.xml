@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Змейка</string>
+    <string name="start_game">Начать игру</string>
+    <string name="settings">Настройки</string>
+    <string name="high_score">Рекорд</string>
+    <string name="about">О игре</string>
+    <string name="score">Счет: %1$d</string>
+    <string name="back">Назад</string>
+    <string name="pause">Пауза</string>
+    <string name="resume">Продолжить</string>
+    <string name="restart">Заново</string>
+    <string name="left">Влево</string>
+    <string name="up">Вверх</string>
+    <string name="down">Вниз</string>
+    <string name="right">Вправо</string>
+    <string name="speed">Скорость</string>
+    <string name="grid_size">Размер поля</string>
+    <string name="vibration">Вибрация</string>
+    <string name="sounds">Звуки</string>
+    <string name="vibration_on">Вибрация вкл</string>
+    <string name="vibration_off">Вибрация выкл</string>
+    <string name="sounds_on">Звуки вкл</string>
+    <string name="sounds_off">Звуки выкл</string>
+    <string name="clear_high_score">Сбросить рекорд</string>
+    <string name="version">Версия: %1$s</string>
+    <string name="about_text">Простая современная игра Змейка, созданная с помощью Jetpack Compose.</string>
+</resources>
