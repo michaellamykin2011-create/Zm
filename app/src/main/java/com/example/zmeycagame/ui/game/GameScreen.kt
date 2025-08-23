@@ -3,45 +3,33 @@ package com.example.zmeycagame.ui.game
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.zmeycagame.ui.models.Cell
-import com.example.zmeycagame.ui.models.Direction
-import com.example.zmeycagame.ui.models.GameState
-import com.example.zmeycagame.ui.models.GameStatus
+import com.example.zmeycagame.game.models.Cell
+import com.example.zmeycagame.game.models.Direction
+import com.example.zmeycagame.game.models.GameState
+import com.example.zmeycagame.game.models.GameStatus
 
 @Composable
 fun GameScreen(
@@ -137,7 +125,7 @@ private fun DrawScope.drawSnake(snake: List<Cell>, cellSize: Float, color: Color
         drawRect(
             color = color,
             topLeft = Offset(x = cell.x * cellSize, y = cell.y * cellSize),
-            size = androidx.compose.ui.geometry.Size(cellSize, cellSize)
+            size = Size(cellSize, cellSize)
         )
     }
 }
@@ -146,7 +134,7 @@ private fun DrawScope.drawFood(food: Cell, cellSize: Float, color: Color) {
     drawRect(
         color = color,
         topLeft = Offset(x = food.x * cellSize, y = food.y * cellSize),
-        size = androidx.compose.ui.geometry.Size(cellSize, cellSize)
+        size = Size(cellSize, cellSize)
     )
 }
 
@@ -154,7 +142,7 @@ private fun DrawScope.drawGameOver(width: Float, height: Float) {
     drawRect(
         color = Color.Black.copy(alpha = 0.5f),
         topLeft = Offset.Zero,
-        size = androidx.compose.ui.geometry.Size(width, height)
+        size = Size(width, height)
     )
 }
 
@@ -162,7 +150,7 @@ private fun DrawScope.drawPaused(width: Float, height: Float) {
     drawRect(
         color = Color.Black.copy(alpha = 0.5f),
         topLeft = Offset.Zero,
-        size = androidx.compose.ui.geometry.Size(width, height)
+        size = Size(width, height)
     )
 }
 
@@ -191,38 +179,38 @@ fun GameControls(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
             Spacer(modifier = Modifier.weight(1f))
             if (gameState.status == GameStatus.RUNNING) {
                 IconButton(onClick = onPause) {
-                    Icon(Icons.Default.Pause, contentDescription = "Pause")
+                    Icon(Icons.Filled.Pause, contentDescription = "Pause")
                 }
             } else {
                 IconButton(onClick = onResume) {
-                    Icon(Icons.Default.PlayArrow, contentDescription = "Resume")
+                    Icon(Icons.Filled.PlayArrow, contentDescription = "Resume")
                 }
             }
             IconButton(onClick = onRestart) {
-                Icon(Icons.Default.Refresh, contentDescription = "Restart")
+                Icon(Icons.Filled.Refresh, contentDescription = "Restart")
             }
         }
         Row {
             Button(onClick = { onDirectionChange(Direction.LEFT) }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Left")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Left")
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Button(onClick = { onDirectionChange(Direction.UP) }) {
-                    Icon(Icons.Default.ArrowUpward, contentDescription = "Up")
+                    Icon(Icons.Filled.ArrowUpward, contentDescription = "Up")
                 }
                 Button(onClick = { onDirectionChange(Direction.DOWN) }) {
-                    Icon(Icons.Default.ArrowDownward, contentDescription = "Down")
+                    Icon(Icons.Filled.ArrowDownward, contentDescription = "Down")
                 }
             }
             Spacer(modifier = Modifier.width(16.dp))
             Button(onClick = { onDirectionChange(Direction.RIGHT) }) {
-                Icon(Icons.Default.ArrowForward, contentDescription = "Right")
+                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Right")
             }
         }
     }

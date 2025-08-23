@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.zmeycagame.ui.settings.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
@@ -27,8 +28,8 @@ fun SettingsScreen(
 ) {
     val gameSpeed by viewModel.gameSpeed.collectAsState()
     val gridSize by viewModel.gridSize.collectAsState()
-    val vibrationEnabled by viewModel.vibrationEnabled.collectAsState()
-    val soundsEnabled by viewModel.soundsEnabled.collectAsState()
+    val vibrationOn by viewModel.vibrationOn.collectAsState()
+    val soundsOn by viewModel.soundsOn.collectAsState()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -88,11 +89,11 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Button(onClick = { viewModel.setVibrationEnabled(!vibrationEnabled) }) {
-                    Text(if (vibrationEnabled) "Vibration On" else "Vibration Off")
+                Button(onClick = { viewModel.setVibration(!vibrationOn) }) {
+                    Text(if (vibrationOn) "Vibration On" else "Vibration Off")
                 }
-                Button(onClick = { viewModel.setSoundsEnabled(!soundsEnabled) }) {
-                    Text(if (soundsEnabled) "Sounds On" else "Sounds Off")
+                Button(onClick = { viewModel.setSounds(!soundsOn) }) {
+                    Text(if (soundsOn) "Sounds On" else "Sounds Off")
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))

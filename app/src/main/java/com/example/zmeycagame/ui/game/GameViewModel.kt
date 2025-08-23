@@ -3,9 +3,10 @@ package com.example.zmeycagame.ui.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.zmeycagame.data.BestScoreRepository
-import com.example.zmeycagame.ui.models.Direction
-import com.example.zmeycagame.ui.models.GameState
-import com.example.zmeycagame.ui.models.GameStatus
+import com.example.zmeycagame.game.GameEngine
+import com.example.zmeycagame.game.models.Direction
+import com.example.zmeycagame.game.models.GameState
+import com.example.zmeycagame.game.models.GameStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

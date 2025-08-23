@@ -3,11 +3,16 @@ package com.example.zmeycagame.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.zmeycagame.data.SettingsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SettingsViewModel(private val settingsRepository: SettingsRepository) : ViewModel() {
+@HiltViewModel
+class SettingsViewModel @Inject constructor(
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
 
     val gameSpeed = settingsRepository.gameSpeed
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 120)
@@ -35,13 +40,13 @@ class SettingsViewModel(private val settingsRepository: SettingsRepository) : Vi
 
     fun setVibration(on: Boolean) {
         viewModelScope.launch {
-            settingsRepository.setVibration(on)
+            settingsRepository.setVibrationOn(on)
         }
     }
 
     fun setSounds(on: Boolean) {
         viewModelScope.launch {
-            settingsRepository.setSounds(on)
+            settingsRepository.setSoundsOn(on)
         }
     }
 }

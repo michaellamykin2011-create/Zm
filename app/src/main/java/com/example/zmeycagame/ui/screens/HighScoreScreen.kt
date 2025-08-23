@@ -13,21 +13,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.zmeycagame.data.BestScoreRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import androidx.lifecycle.ViewModel
 
 @Composable
 fun HighScoreScreen(
-    bestScoreRepository: BestScoreRepository,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: HighScoreViewModel = hiltViewModel()
 ) {
-    val bestScore by bestScoreRepository.bestScore.collectAsState(initial = 0)
+    val bestScore by viewModel.bestScore.collectAsState(initial = 0)
+    val scope = rememberCoroutineScope()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -51,8 +53,8 @@ fun HighScoreScreen(
             )
             Spacer(modifier = Modifier.height(32.dp))
             Button(onClick = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    bestScoreRepository.clearBestScore()
+                scope.launch {
+                    viewModel.clearBestScore()
                 }
             }) {
                 Text("Clear High Score")
@@ -62,5 +64,16 @@ fun HighScoreScreen(
                 Text("Back")
             }
         }
+    }
+}
+
+class HighScoreViewModel @Inject constructor(
+    private val bestScoreRepository: BestScoreRepository
+) : ViewModel() {
+
+    val bestScore = bestScoreRepository.bestScore
+
+    suspend fun clearBestScore() {
+        bestScoreRepository.updateBestScore(0)
     }
 }
