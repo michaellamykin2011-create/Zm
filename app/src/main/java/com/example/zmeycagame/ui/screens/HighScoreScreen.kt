@@ -22,6 +22,7 @@ import com.example.zmeycagame.data.BestScoreRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Composable
 fun HighScoreScreen(
@@ -67,6 +68,7 @@ fun HighScoreScreen(
     }
 }
 
+@HiltViewModel
 class HighScoreViewModel @Inject constructor(
     private val bestScoreRepository: BestScoreRepository
 ) : ViewModel() {

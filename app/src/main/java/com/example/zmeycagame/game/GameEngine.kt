@@ -2,24 +2,62 @@ package com.example.zmeycagame.game
 
 import kotlin.random.Random
 
+data class Cell(val x: Int, val y: Int)
+
+enum class Direction {
+    UP, DOWN, LEFT, RIGHT;
+
+    fun isOpposite(other: Direction): Boolean {
+        return when (this) {
+            UP -> other == DOWN
+            DOWN -> other == UP
+            LEFT -> other == RIGHT
+            RIGHT -> other == LEFT
+        }
+    }
+}
+
+enum class GameStatus {
+    RUNNING,
+    PAUSED,
+    GAME_OVER
+}
+
+data class GameState(
+    val snake: List<Cell> = listOf(Cell(5, 5)),
+    val direction: Direction = Direction.RIGHT,
+    val food: Cell = Cell(10, 10),
+    val score: Int = 0,
+    val bestScore: Int = 0,
+    val status: GameStatus = GameStatus.RUNNING,
+    val gridSize: Int = 20
+)
+
+sealed class GameAction {
+    object StartGame : GameAction()
+    object RestartGame : GameAction()
+    data class Swipe(val direction: Direction) : GameAction()
+    object PauseGame : GameAction()
+    object ResumeGame : GameAction()
+}
+
 object GameEngine {
 
     private const val GRID_WIDTH = 20
     private const val GRID_HEIGHT = 20
 
-    fun tick(currentState: GameState, onDirectionChanged: (Direction) -> Unit): GameState {
-        if (currentState.isPaused || currentState.isGameOver) {
+    fun tick(currentState: GameState): GameState {
+        if (currentState.status != GameStatus.RUNNING) {
             return currentState
         }
 
         val newHead = getNewHead(currentState.snake.first(), currentState.direction)
 
         if (isWallCollision(newHead) || isSelfCollision(newHead, currentState.snake)) {
-            return currentState.copy(isGameOver = true)
+            return currentState.copy(status = GameStatus.GAME_OVER)
         }
 
-        val newSnake = mutableListOf(newHead)
-        newSnake.addAll(currentState.snake)
+        val newSnake = currentState.snake.toMutableList().apply { add(0, newHead) }
 
         val foodEaten = newHead == currentState.food
         if (!foodEaten) {
@@ -31,7 +69,7 @@ object GameEngine {
         } else {
             currentState.food
         }
-        
+
         val newScore = if (foodEaten) currentState.score + 1 else currentState.score
 
         return currentState.copy(
@@ -64,17 +102,5 @@ object GameEngine {
             newFood = Cell(Random.nextInt(GRID_WIDTH), Random.nextInt(GRID_HEIGHT))
         } while (snake.contains(newFood))
         return newFood
-    }
-
-    fun restart(currentState: GameState): GameState {
-        return GameState(
-            snake = listOf(Cell(5, 5)),
-            direction = Direction.RIGHT,
-            food = generateNewFood(listOf(Cell(5, 5))),
-            score = 0,
-            bestScore = if(currentState.score > currentState.bestScore) currentState.score else currentState.bestScore,
-            isGameOver = false,
-            isPaused = false
-        )
     }
 }

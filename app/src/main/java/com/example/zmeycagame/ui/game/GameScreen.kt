@@ -2,6 +2,7 @@ package com.example.zmeycagame.ui.game
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,10 +28,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.zmeycagame.game.models.Cell
-import com.example.zmeycagame.game.models.Direction
-import com.example.zmeycagame.game.models.GameState
-import com.example.zmeycagame.game.models.GameStatus
+import com.example.zmeycagame.game.Cell
+import com.example.zmeycagame.game.Direction
+import com.example.zmeycagame.game.GameAction
+import com.example.zmeycagame.game.GameState
+import com.example.zmeycagame.game.GameStatus
+import kotlin.math.abs
 
 @Composable
 fun GameScreen(
@@ -37,6 +41,10 @@ fun GameScreen(
     onBack: () -> Unit,
 ) {
     val gameState by viewModel.gameState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onAction(GameAction.StartGame)
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -50,17 +58,15 @@ fun GameScreen(
                     .fillMaxWidth()
                     .weight(1f)
                     .background(Color(0xFF0B1220))
+                    .border(3.dp, Color.LightGray)
             ) {
                 GameBoard(
                     gameState = gameState,
-                    onSwipe = viewModel::onSwipe
+                    onSwipe = { direction -> viewModel.onAction(GameAction.Swipe(direction)) }
                 )
             }
             GameControls(
-                onDirectionChange = viewModel::onSwipe,
-                onPause = viewModel::onPause,
-                onResume = viewModel::onResume,
-                onRestart = viewModel::restartGame,
+                onAction = viewModel::onAction,
                 onBack = onBack,
                 gameState = gameState,
             )
@@ -78,12 +84,15 @@ fun GameBoard(
             .fillMaxSize()
             .pointerInput(Unit) {
                 detectTapGestures { offset ->
-                    val center = size.width / 2
-                    when {
-                        offset.x < center - 50 -> onSwipe(Direction.LEFT)
-                        offset.x > center + 50 -> onSwipe(Direction.RIGHT)
-                        offset.y < size.height / 2 -> onSwipe(Direction.UP)
-                        else -> onSwipe(Direction.DOWN)
+                    val (width, height) = size
+                    val (x, y) = offset
+
+                    val verticalSwipe = abs(y - height / 2) > abs(x - width / 2)
+
+                    if (verticalSwipe) {
+                        if (y < height / 2) onSwipe(Direction.UP) else onSwipe(Direction.DOWN)
+                    } else {
+                        if (x < width / 2) onSwipe(Direction.LEFT) else onSwipe(Direction.RIGHT)
                     }
                 }
             }
@@ -156,10 +165,7 @@ private fun DrawScope.drawPaused(width: Float, height: Float) {
 
 @Composable
 fun GameControls(
-    onDirectionChange: (Direction) -> Unit,
-    onPause: () -> Unit,
-    onResume: () -> Unit,
-    onRestart: () -> Unit,
+    onAction: (GameAction) -> Unit,
     onBack: () -> Unit,
     gameState: GameState,
 ) {
@@ -183,33 +189,33 @@ fun GameControls(
             }
             Spacer(modifier = Modifier.weight(1f))
             if (gameState.status == GameStatus.RUNNING) {
-                IconButton(onClick = onPause) {
+                IconButton(onClick = { onAction(GameAction.PauseGame) }) {
                     Icon(Icons.Filled.Pause, contentDescription = "Pause")
                 }
             } else {
-                IconButton(onClick = onResume) {
+                IconButton(onClick = { onAction(GameAction.ResumeGame) }) {
                     Icon(Icons.Filled.PlayArrow, contentDescription = "Resume")
                 }
             }
-            IconButton(onClick = onRestart) {
+            IconButton(onClick = { onAction(GameAction.RestartGame) }) {
                 Icon(Icons.Filled.Refresh, contentDescription = "Restart")
             }
         }
         Row {
-            Button(onClick = { onDirectionChange(Direction.LEFT) }) {
+            Button(onClick = { onAction(GameAction.Swipe(Direction.LEFT)) }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Left")
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                Button(onClick = { onDirectionChange(Direction.UP) }) {
+                Button(onClick = { onAction(GameAction.Swipe(Direction.UP)) }) {
                     Icon(Icons.Filled.ArrowUpward, contentDescription = "Up")
                 }
-                Button(onClick = { onDirectionChange(Direction.DOWN) }) {
+                Button(onClick = { onAction(GameAction.Swipe(Direction.DOWN)) }) {
                     Icon(Icons.Filled.ArrowDownward, contentDescription = "Down")
                 }
             }
             Spacer(modifier = Modifier.width(16.dp))
-            Button(onClick = { onDirectionChange(Direction.RIGHT) }) {
+            Button(onClick = { onAction(GameAction.Swipe(Direction.RIGHT)) }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Right")
             }
         }

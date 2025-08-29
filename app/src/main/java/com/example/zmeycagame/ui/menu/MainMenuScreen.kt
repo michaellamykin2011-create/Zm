@@ -15,8 +15,7 @@ import com.example.zmeycagame.data.BestScoreRepository
 @Composable
 fun MainMenuScreen(
     bestScoreRepository: BestScoreRepository,
-    onNavigateToGame: () -> Unit,
-    onNavigateToSettings: () -> Unit,
+    onStartGame: () -> Unit,
     onNavigateToHighScore: () -> Unit,
     onNavigateToAbout: () -> Unit
 ) {
@@ -32,23 +31,13 @@ fun MainMenuScreen(
         Text(text = "Best Score: $bestScore", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(32.dp))
         Button(
-            onClick = onNavigateToGame,
+            onClick = onStartGame,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp)
                 .height(56.dp)
         ) {
             Text(text = "Start Game")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = onNavigateToSettings,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp)
-                .height(56.dp)
-        ) {
-            Text(text = "Settings")
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(

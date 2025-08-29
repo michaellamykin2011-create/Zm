@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MainMenuScreen(
     onStartGame: () -> Unit,
-    onSettings: () -> Unit,
     onHighScore: () -> Unit,
     onAbout: () -> Unit
 ) {
@@ -46,15 +45,6 @@ fun MainMenuScreen(
                     .height(56.dp)
             ) {
                 Text("Start Game")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = onSettings,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                Text("Settings")
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(

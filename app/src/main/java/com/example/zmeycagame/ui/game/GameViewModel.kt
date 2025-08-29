@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.zmeycagame.data.BestScoreRepository
 import com.example.zmeycagame.game.GameEngine
-import com.example.zmeycagame.game.models.Direction
-import com.example.zmeycagame.game.models.GameState
-import com.example.zmeycagame.game.models.GameStatus
+import com.example.zmeycagame.game.Direction
+import com.example.zmeycagame.game.GameAction
+import com.example.zmeycagame.game.GameState
+import com.example.zmeycagame.game.GameStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -32,12 +33,21 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun startGame() {
-        if (_gameState.value.status == GameStatus.RUNNING) return
+    fun onAction(action: GameAction) {
+        when (action) {
+            GameAction.StartGame -> startGame()
+            GameAction.RestartGame -> restartGame()
+            is GameAction.Swipe -> onSwipe(action.direction)
+            GameAction.PauseGame -> onPause()
+            GameAction.ResumeGame -> onResume()
+        }
+    }
 
-        _gameState.value = GameState(status = GameStatus.RUNNING)
+    private fun startGame() {
+        if (_gameState.value.status == GameStatus.RUNNING) return
+        _gameState.value = _gameState.value.copy(status = GameStatus.RUNNING)
         gameJob = viewModelScope.launch {
-            while (true) {
+            while (_gameState.value.status == GameStatus.RUNNING) {
                 delay(120)
                 _gameState.value = GameEngine.tick(_gameState.value)
                 if (_gameState.value.status == GameStatus.GAME_OVER) {
@@ -50,13 +60,13 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun restartGame() {
+    private fun restartGame() {
         gameJob?.cancel()
         _gameState.value = GameState()
         startGame()
     }
 
-    fun onSwipe(direction: Direction) {
+    private fun onSwipe(direction: Direction) {
         if (_gameState.value.status != GameStatus.RUNNING) return
 
         val currentDirection = _gameState.value.direction
@@ -65,16 +75,15 @@ class GameViewModel @Inject constructor(
         _gameState.value = _gameState.value.copy(direction = direction)
     }
 
-    fun onPause() {
+    private fun onPause() {
         if (_gameState.value.status == GameStatus.RUNNING) {
             _gameState.value = _gameState.value.copy(status = GameStatus.PAUSED)
             gameJob?.cancel()
         }
     }
 
-    fun onResume() {
+    private fun onResume() {
         if (_gameState.value.status == GameStatus.PAUSED) {
-            _gameState.value = _gameState.value.copy(status = GameStatus.RUNNING)
             startGame()
         }
     }
